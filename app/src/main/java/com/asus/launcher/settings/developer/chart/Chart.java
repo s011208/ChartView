@@ -18,11 +18,12 @@ public class Chart extends View {
     private static final boolean DEBUG = ChartView.DEBUG;
     private static final String TAG = ChartView.TAG;
 
+    private static final int HOLO_BORDER_WIDTH = 3;
+    private static final int BORDER_VERTICAL_PADDING = 20;
+    private static final int YAXIS_PADDING_RIGHT = 3;
+
     // paints
     private static final Paint sHoloGridPaint = new Paint();
-    private static final int HOLO_BORDER_WIDTH = 3;
-
-    private static final int BORDER_VERTICAL_PADDING = 10;
 
     static {
         sHoloGridPaint.setAntiAlias(true);
@@ -110,6 +111,8 @@ public class Chart extends View {
             mMaximumY = Math.max(mMaximumY, seriesHeight);
             mYAxisRect.union(ChartView.getTextBound(String.valueOf(seriesHeight), ChartView.getBlackTextPaint()));
         }
+        // expand padding
+        mYAxisRect = new Rect(mYAxisRect.left, mYAxisRect.top, mYAxisRect.right + YAXIS_PADDING_RIGHT, mYAxisRect.bottom);
     }
 
     // draw
@@ -139,15 +142,13 @@ public class Chart extends View {
     }
 
     private void drawYAxisValues(Canvas canvas) {
-        if(DEBUG)
-            Log.e(TAG, "mMaximumY: " + mMaximumY);
-        for (int i = ROW_COUNT; i >= 0; i--) {
-            final int value = i == 0 ? 0 : mMaximumY / i;
-            if(DEBUG)
-                Log.v(TAG, "value: " + value);
-            final String strValue =  String.valueOf(value);
-            final Rect valueRect =  ChartView.getTextBound(strValue, ChartView.getBlackTextPaint());
-            canvas.drawText(strValue, 0, mChartBorderRect.top + mHeightPerRow * (i + 1), ChartView.getBlackTextPaint());
+        for (int i = 0; i <= ROW_COUNT; i++) {
+            final int value = mMaximumY - (mMaximumY) * i / ROW_COUNT;
+            final String strValue = String.valueOf(value);
+            final Rect valueRect = ChartView.getTextBound(strValue, ChartView.getBlackTextPaint());
+            // align center offset
+            final int centerOffset = (mYAxisRect.width() - valueRect.width()) / 2;
+            canvas.drawText(strValue, centerOffset, mChartBorderRect.top + mHeightPerRow * i + valueRect.height() / 2, ChartView.getBlackTextPaint());
         }
     }
 }
