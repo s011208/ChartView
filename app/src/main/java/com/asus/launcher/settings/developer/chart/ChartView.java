@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
@@ -61,6 +62,26 @@ public class ChartView extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         mContext = context;
         initComponents();
+        getLogDataAndDraw();
+    }
+
+    private void getLogDataAndDraw(){
+        new ChartSeriesAdapter(new ChartSeriesAdapter.Callback(){
+            @Override
+            public void onPreExecute() {
+
+            }
+
+            @Override
+            public void onPostExecute(ArrayList<ChartSeries> series) {
+                mChartSeries.clear();
+                mChartSeries.addAll(series);
+                if(DEBUG){
+                    Log.d(TAG, "series size: " + series.size());
+                }
+                setup();
+            }
+        });
     }
 
     private void initComponents() {
@@ -86,14 +107,10 @@ public class ChartView extends RelativeLayout {
             RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             rl.addRule(RelativeLayout.ABOVE, ChartSeriesName.class.hashCode());
             rl.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            rl.setMargins(1, 1, 1, 1);
             addView(mChart, rl);
         }
         return mChart;
-    }
-
-    public void addChartSeries(ChartSeries cs) {
-        mChartSeries.add(cs);
-        Collections.sort(mChartSeries);
     }
 
     private void setupPaintForSeriesIfNeeded() {
@@ -106,7 +123,7 @@ public class ChartView extends RelativeLayout {
 
     public void setup() {
         setupPaintForSeriesIfNeeded();
-        getChart().setup();
+        getChart().setup(mChartSeries);
         getChartSeriesName().setup(mChartSeries);
         requestLayout();
         invalidate();

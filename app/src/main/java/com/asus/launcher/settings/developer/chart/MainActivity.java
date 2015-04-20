@@ -13,11 +13,6 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ChartView cv = (ChartView) findViewById(R.id.chart_view);
-        cv.addChartSeries(new ChartSeries("launcher 1"));
-        cv.addChartSeries(new ChartSeries("launcher 2"));
-        cv.addChartSeries(new ChartSeries("launcher 3"));
-        cv.addChartSeries(new ChartSeries("launcher 4"));
-        cv.addChartSeries(new ChartSeries("launcher 5"));
         cv.setup();
     }
 

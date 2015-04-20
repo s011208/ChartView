@@ -5,8 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
+import java.util.ArrayList;
 
 /**
  * Created by Yen-Hsun_Huang on 2015/4/20.
@@ -17,11 +20,14 @@ public class Chart extends View {
 
     // paints
     private static final Paint sHoloGridPaint = new Paint();
+    private static final int HOLO_BORDER_WIDTH = 3;
+
+    private static final int BORDER_VERTICAL_PADDING = 10;
 
     static {
         sHoloGridPaint.setAntiAlias(true);
         sHoloGridPaint.setColor(Color.rgb(53, 178, 222));
-        sHoloGridPaint.setStrokeWidth(3);
+        sHoloGridPaint.setStrokeWidth(HOLO_BORDER_WIDTH);
         sHoloGridPaint.setStyle(Paint.Style.STROKE);
     }
 
@@ -43,7 +49,10 @@ public class Chart extends View {
 
     }
 
-    private static final int ROW_COUNT = 15;
+    private static final int ROW_COUNT = 10;
+
+
+    private int mHeightPerRow;
 
     // region rects
     private Rect mChartBorderRect;
@@ -51,6 +60,10 @@ public class Chart extends View {
     private Rect mYAxisRect;
 
     private int mWidth, mHeight;
+
+    private int mMaximumY;
+
+    private final ArrayList<ChartSeries> mSeries = new ArrayList<>();
 
     public Chart(Context context) {
         super(context);
@@ -60,38 +73,81 @@ public class Chart extends View {
     private void initComponents() {
     }
 
-    public void setup() {
+    private void calculateVariables() {
+    }
+
+    public void setup(ArrayList<ChartSeries> series) {
+        mSeries.clear();
+        mSeries.addAll(series);
+        calculateVariables();
         getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 getViewTreeObserver().removeOnPreDrawListener(this);
                 mWidth = getWidth();
                 mHeight = getHeight();
-                calculateRects();
+                calculateRect();
+                mHeightPerRow = mChartBorderRect.height() / ROW_COUNT;
                 return false;
             }
         });
         invalidate();
     }
 
-    private void calculateRects() {
+    private void calculateRect() {
         calculateYAxisRect();
         calculateChartBorderRect();
     }
 
     private void calculateChartBorderRect() {
-        mChartBorderRect = new Rect();
+        mChartBorderRect = new Rect(mYAxisRect.width(), BORDER_VERTICAL_PADDING, mWidth, mHeight - BORDER_VERTICAL_PADDING);
     }
 
     private void calculateYAxisRect() {
-        mYAxisRect = new Rect();
+        mYAxisRect = new Rect(0, 0, 0, mHeight);
+        for (ChartSeries cs : mSeries) {
+            final int seriesHeight = cs.getSeriesRange().height();
+            mMaximumY = Math.max(mMaximumY, seriesHeight);
+            mYAxisRect.union(ChartView.getTextBound(String.valueOf(seriesHeight), ChartView.getBlackTextPaint()));
+        }
     }
 
+    // draw
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mChartBorderRect == null) {
             return;
+        }
+        drawRawSeparator(canvas);
+        drawBorder(canvas);
+        drawYAxisValues(canvas);
+    }
+
+    private void drawBorder(Canvas canvas) {
+        if (DEBUG) {
+            Log.d(TAG, "mChartBorderRect: " + mChartBorderRect);
+        }
+        canvas.drawRect(mChartBorderRect, sHoloGridPaint);
+    }
+
+    private void drawRawSeparator(Canvas canvas) {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            canvas.drawLine(mChartBorderRect.left, mChartBorderRect.top + mHeightPerRow * i
+                    , mChartBorderRect.right, mChartBorderRect.top + mHeightPerRow * i, sGayRowPaint);
+        }
+    }
+
+    private void drawYAxisValues(Canvas canvas) {
+        if(DEBUG)
+            Log.e(TAG, "mMaximumY: " + mMaximumY);
+        for (int i = ROW_COUNT; i >= 0; i--) {
+            final int value = i == 0 ? 0 : mMaximumY / i;
+            if(DEBUG)
+                Log.v(TAG, "value: " + value);
+            final String strValue =  String.valueOf(value);
+            final Rect valueRect =  ChartView.getTextBound(strValue, ChartView.getBlackTextPaint());
+            canvas.drawText(strValue, 0, mChartBorderRect.top + mHeightPerRow * (i + 1), ChartView.getBlackTextPaint());
         }
     }
 }

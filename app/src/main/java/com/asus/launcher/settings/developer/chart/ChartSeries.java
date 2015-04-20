@@ -1,6 +1,8 @@
 package com.asus.launcher.settings.developer.chart;
 
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -19,6 +21,8 @@ public class ChartSeries implements Comparable<ChartSeries> {
 
     private int mPaintColor;
 
+    private final Rect mSeriesRange = new Rect();
+
     private final ArrayList<ChartPoint> mSeriesPoints = new ArrayList<ChartPoint>();
 
     public ChartSeries(String seriesName) {
@@ -27,6 +31,7 @@ public class ChartSeries implements Comparable<ChartSeries> {
 
     public void addChartPoint(ChartPoint point) {
         mSeriesPoints.add(point);
+        mSeriesRange.union(new Rect(0, 0, point.x, point.y));
     }
 
     public void setSeriesPaintColor(int color) {
@@ -35,16 +40,18 @@ public class ChartSeries implements Comparable<ChartSeries> {
         mSeriesPaint.setColor(mPaintColor);
     }
 
+    public Rect getSeriesRange() {
+        if (DEBUG)
+            Log.v(TAG, "mSeriesName: " + mSeriesName + ", mPointsRange: " + mSeriesRange);
+        return mSeriesRange;
+    }
+
     public int getPaintColor() {
         return mPaintColor;
     }
 
     public boolean hasCustomizedPaintColor() {
         return mHasCustomizedPaintColor;
-    }
-
-    public void setSeriesName(String name) {
-        mSeriesName = name;
     }
 
     public String getSeriesName() {

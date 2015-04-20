@@ -43,6 +43,8 @@ public class ChartSeriesName extends View {
     public void setup(ArrayList<ChartSeries> series) {
         mSeries.clear();
         mItemRect = new Rect();
+        if (DEBUG)
+            Log.v(TAG, "ChartSeriesName setup, series size: " + series.size());
         for (ChartSeries cs : series) {
             Rect seriesRect = getItemRect(cs);
             if (DEBUG) {
@@ -57,6 +59,8 @@ public class ChartSeriesName extends View {
             Log.d(TAG, "mDesiredWidth: " + mDesiredWidth
                     + ", mDesiredHeight: " + mDesiredHeight
                     + ", mItemRect: " + mItemRect);
+        requestLayout();
+        invalidate();
     }
 
     private static Rect getItemRect(ChartSeries series) {
