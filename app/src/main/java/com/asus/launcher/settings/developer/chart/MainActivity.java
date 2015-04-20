@@ -12,8 +12,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ChartView cv = (ChartView) findViewById(R.id.chart_view);
-        cv.setup();
+//        ChartView cv = (ChartView) findViewById(R.id.chart_view);
+//        cv.setup();
     }
 
 
