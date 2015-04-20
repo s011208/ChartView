@@ -47,6 +47,7 @@ public class ChartView extends RelativeLayout {
     // views
     private Chart mChart;
     private ChartSeriesName mChartSeriesName;
+    private ChartSelectedLine mChartSelectedLine;
     // data
     private final ArrayList<ChartSeries> mChartSeries = new ArrayList<ChartSeries>();
 
@@ -87,6 +88,7 @@ public class ChartView extends RelativeLayout {
     private void initComponents() {
         getChart();
         getChartSeriesName();
+        getChartSelectedLine();
     }
 
     private synchronized ChartSeriesName getChartSeriesName() {
@@ -113,6 +115,19 @@ public class ChartView extends RelativeLayout {
         return mChart;
     }
 
+    private synchronized ChartSelectedLine getChartSelectedLine(){
+        if (mChartSelectedLine == null) {
+            mChartSelectedLine = new ChartSelectedLine(mContext);
+            mChartSelectedLine.setId(ChartSelectedLine.class.hashCode());
+            RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            rl.addRule(RelativeLayout.ABOVE, ChartSeriesName.class.hashCode());
+            rl.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            rl.setMargins(1, 1, 1, 1);
+            addView(mChartSelectedLine, rl);
+        }
+        return mChartSelectedLine;
+    }
+
     private void setupPaintForSeriesIfNeeded() {
         for (ChartSeries cs : mChartSeries) {
             if (cs.hasCustomizedPaintColor() == false) {
@@ -125,6 +140,7 @@ public class ChartView extends RelativeLayout {
         setupPaintForSeriesIfNeeded();
         getChart().setup(mChartSeries);
         getChartSeriesName().setup(mChartSeries);
+        getChartSelectedLine().setup(getChart());
         requestLayout();
         invalidate();
     }

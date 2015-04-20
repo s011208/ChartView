@@ -23,7 +23,7 @@ public class ChartSeries implements Comparable<ChartSeries> {
 
     private final Rect mSeriesRange = new Rect();
 
-    private final ArrayList<ChartPoint> mSeriesPoints = new ArrayList<ChartPoint>();
+    private final ArrayList<ChartPoint> mSeriesPoints = new ArrayList<>();
 
     public ChartSeries(String seriesName) {
         mSeriesName = seriesName;

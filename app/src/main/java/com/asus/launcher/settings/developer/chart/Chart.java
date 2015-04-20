@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * Created by Yen-Hsun_Huang on 2015/4/20.
  */
 public class Chart extends View {
+
     private static final boolean DEBUG = ChartView.DEBUG;
     private static final String TAG = ChartView.TAG;
 
@@ -38,16 +39,6 @@ public class Chart extends View {
         sGayRowPaint.setAntiAlias(true);
         sGayRowPaint.setColor(Color.rgb(224, 224, 224));
         sGayRowPaint.setStrokeWidth(2);
-    }
-
-    private static final Paint sSelectionPaint = new Paint();
-
-    static {
-
-        sSelectionPaint.setAntiAlias(true);
-        sSelectionPaint.setColor(Color.rgb(150, 150, 150));
-        sSelectionPaint.setStrokeWidth(2);
-
     }
 
     private static final int ROW_COUNT = 10;
@@ -93,6 +84,10 @@ public class Chart extends View {
             }
         });
         invalidate();
+    }
+
+    public Rect getChartBorderRect() {
+        return mChartBorderRect;
     }
 
     private void calculateRect() {
