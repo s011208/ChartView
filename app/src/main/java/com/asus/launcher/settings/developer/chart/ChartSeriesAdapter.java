@@ -9,6 +9,7 @@ import com.asus.launcher.log.LogData;
 import com.asus.launcher.log.LogMemInfoData;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -62,34 +63,40 @@ public class ChartSeriesAdapter extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    private ArrayList<ChartSeries> convertFromLogDataToSeries(
+    private static ArrayList<ChartSeries> convertFromLogDataToSeries(
             HashMap<String, ArrayList<LogData>> logDataMap) {
         ArrayList<ChartSeries> rtn = new ArrayList<>();
         Iterator<String> iterator = logDataMap.keySet().iterator();
         while (iterator.hasNext()) {
             final String key = iterator.next();
-            Log.e(TAG, "logDataMap.get(" + key + ") size: " + logDataMap.get(key).size());
+            if (DEBUG)
+                Log.v(TAG, "logDataMap.get(" + key + ") size: " + logDataMap.get(key).size());
             ChartSeries cSeries = new ChartSeries(key);
-            StringBuilder extras = new StringBuilder();
-            int index = 0;
+            StringBuilder sb = new StringBuilder();
             for (LogData data : logDataMap.get(key)) {
-                extras.append(data.toSimpleString());
-                if (data instanceof LogBehaviorData) {
-                } else if (data instanceof LogMemInfoData) {
-                    if (DEBUG)
-                        Log.v(TAG, "time: " + data.mTime +
-                                        ", pss: " + ((LogMemInfoData) data).mTotalPss
-                        );
-                    cSeries.addChartPoint(new ChartPoint(index,
-                            ((LogMemInfoData) data).mTotalPss, extras.toString()));
-                    extras = new StringBuilder();
-                    ++index;
-                } else if (data instanceof LogConfigData) {
-                }
+                addAndCombineChartPoint(data, cSeries, sb);
             }
+            if (DEBUG)
+                Log.v(TAG, "cSeries.getChartPointSize(): " + cSeries.getChartPointSize());
             rtn.add(cSeries);
         }
         return rtn;
     }
 
+    private static void addAndCombineChartPoint(LogData data, ChartSeries cSeries, StringBuilder sb) {
+        final int index = (int) (data.mTime / 60000); // using minutes as index and avoid overflow
+        sb.append(data.toSimpleString() + "\n");
+        if (data instanceof LogBehaviorData) {
+        } else if (data instanceof LogMemInfoData) {
+            cSeries.addChartPoint(index, new ChartPoint(index, ((LogMemInfoData) data).mTotalPss, sb.toString()));
+            sb.delete(0, sb.length());
+        } else if (data instanceof LogConfigData) {
+        }
+        if (DEBUG) {
+            Calendar ca = Calendar.getInstance();
+            ca.setTimeInMillis(data.mTime);
+            Log.v(TAG, "index: " + index
+                    + ", log: " + data.toSimpleString());
+        }
+    }
 }

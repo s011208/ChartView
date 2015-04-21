@@ -1,27 +1,19 @@
 package com.asus.launcher.settings.developer.chart;
 
-import android.graphics.Point;
-
 /**
  * Created by Yen-Hsun_Huang on 2015/4/20.
  */
-public class ChartPoint extends Point implements Comparable<ChartPoint> {
+public class ChartPoint implements Comparable<ChartPoint> {
+    public int x, y;
     private String mExtraInfo;
 
     public ChartPoint(int x, int y) {
-        this(new Point(x, y));
+        this(x, y, null);
     }
 
     public ChartPoint(int x, int y, String extraInfo) {
-        this(new Point(x, y), extraInfo);
-    }
-
-    public ChartPoint(Point point) {
-        this(point, null);
-    }
-
-    public ChartPoint(Point point, String extraInfo) {
-        super(point);
+        this.x = x;
+        this.y = y;
         mExtraInfo = extraInfo;
     }
 
@@ -29,8 +21,12 @@ public class ChartPoint extends Point implements Comparable<ChartPoint> {
         return mExtraInfo;
     }
 
-    public void setExtraInfo(String extraInfo) {
-        mExtraInfo = extraInfo;
+    public void addExtraInfo(String extraInfo) {
+        if (mExtraInfo == null) {
+            mExtraInfo = extraInfo;
+        } else {
+            mExtraInfo += "\n" + extraInfo;
+        }
     }
 
     @Override

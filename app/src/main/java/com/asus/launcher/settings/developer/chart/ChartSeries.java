@@ -1,8 +1,10 @@
 package com.asus.launcher.settings.developer.chart;
 
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.Log;
+import android.util.LongSparseArray;
 
 import java.util.ArrayList;
 
@@ -23,15 +25,76 @@ public class ChartSeries implements Comparable<ChartSeries> {
 
     private final Rect mSeriesRange = new Rect();
 
-    private final ArrayList<ChartPoint> mSeriesPoints = new ArrayList<>();
+    private int mMinimumX = -1, mMaximumX = -1, mMinimumY = -1, mMaximumY = -1;
+
+    private final LongSparseArray<ChartPoint> mSeriesPoints = new LongSparseArray<>();
+
+    private final ArrayList<Path> mSeriesPath = new ArrayList<>();
 
     public ChartSeries(String seriesName) {
         mSeriesName = seriesName;
     }
 
-    public void addChartPoint(ChartPoint point) {
-        mSeriesPoints.add(point);
-        mSeriesRange.union(new Rect(0, 0, point.x, point.y));
+    private void calculateSeriesRange(ChartPoint point) {
+        if (DEBUG) {
+            Log.v(TAG, "ChartSeries calculateSeriesRange, x: " + point.x + ", y: " + point.y);
+        }
+        if (mMinimumX == -1) {
+            mMinimumX = point.x;
+            mMaximumX = mMinimumX;
+            mMinimumY = point.y;
+            mMaximumY = mMinimumY;
+        } else {
+            mMinimumX = Math.min(mMinimumX, point.x);
+            mMaximumX = Math.max(mMaximumX, point.x);
+            mMinimumY = Math.min(mMinimumY, point.y);
+            mMaximumY = Math.max(mMaximumY, point.y);
+            mSeriesRange.set(mMinimumX, mMinimumY, mMaximumX, mMaximumY);
+        }
+    }
+
+    public void addChartPoint(int index, ChartPoint point) {
+        mSeriesPoints.put(index, point);
+        calculateSeriesRange(point);
+    }
+
+    public void createPaths(Rect border, Rect visibleRect) {
+        Path path = new Path();
+        if (DEBUG)
+            Log.d(TAG, "createPaths, border: " + border
+                    + ", visibleRect: " + visibleRect);
+        for (int i = visibleRect.left; i < visibleRect.right; i++) {
+            final ChartPoint point = getChartPoint(i);
+            if (point == null) {
+                continue;
+            }
+            final int x = border.left + (i - visibleRect.left);
+            final int y = border.height() - (int)((border.height() / (float) Math.abs(visibleRect.height())) * point.y) + border.top;
+            if (DEBUG)
+                Log.d(TAG, "x: " + x + ", y: " + y + ", point.y: " + point.y);
+            if (path.isEmpty()) {
+                path.moveTo(x, y);
+            } else {
+                path.lineTo(x, y);
+            }
+        }
+        if (path.isEmpty() == false) {
+            mSeriesPath.add(path);
+        }
+        if (DEBUG)
+            Log.v(TAG, "createPaths mSeriesPath size: " + mSeriesPath.size());
+    }
+
+    public ArrayList<Path> getSeriesPath() {
+        return mSeriesPath;
+    }
+
+    public ChartPoint getChartPoint(int index) {
+        return mSeriesPoints.get(index);
+    }
+
+    public int getChartPointSize() {
+        return mSeriesPoints.size();
     }
 
     public void setSeriesPaintColor(int color) {

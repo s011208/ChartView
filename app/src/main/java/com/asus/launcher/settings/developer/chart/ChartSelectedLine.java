@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -12,8 +13,11 @@ import android.view.View;
  * Created by yenhsunhuang on 15/4/21.
  */
 public class ChartSelectedLine extends View {
+    private static final String TAG = ChartView.TAG;
+    private static final boolean DEBUG = ChartView.DEBUG;
+
     public interface Callback {
-        public void onLinePositionChanged();
+        public void onLinePositionChanged(int index);
     }
 
     private static final Paint sSelectionPaint = new Paint();
@@ -22,7 +26,7 @@ public class ChartSelectedLine extends View {
 
         sSelectionPaint.setAntiAlias(true);
         sSelectionPaint.setColor(Color.rgb(150, 150, 150));
-        sSelectionPaint.setStrokeWidth(2);
+        sSelectionPaint.setStrokeWidth(3);
 
     }
 
@@ -68,11 +72,22 @@ public class ChartSelectedLine extends View {
         if (isPositionValid) {
             mTouchX = x;
             if (mCallback != null) {
-                mCallback.onLinePositionChanged();
+                mCallback.onLinePositionChanged(mChart.getSeriesIndex(x));
             }
+            test(mChart.getSeriesIndex(x));
             invalidate();
         }
         return isPositionValid;
+    }
+
+    private void test(int index) {
+        for (ChartSeries series : mChart.getSeries()) {
+            ChartPoint point = series.getChartPoint(index);
+            if (point != null) {
+                if (DEBUG)
+                    Log.d(TAG, point.toString());
+            }
+        }
     }
 
     private boolean isInChartBorder(int x, int y) {

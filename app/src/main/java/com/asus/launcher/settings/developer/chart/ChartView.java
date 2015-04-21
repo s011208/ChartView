@@ -150,7 +150,7 @@ public class ChartView extends RelativeLayout {
         }
     }
 
-    public void setup() {
+    private void setup() {
         setupPaintForSeriesIfNeeded();
         getChart().setup(mChartSeries);
         getChartSeriesName().setup(mChartSeries);

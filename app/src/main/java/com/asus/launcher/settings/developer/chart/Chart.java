@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +42,14 @@ public class Chart extends View {
         sGayRowPaint.setStrokeWidth(2);
     }
 
+    private static final Paint sSeriesPaint = new Paint();
+
+    static {
+        sSeriesPaint.setAntiAlias(true);
+        sSeriesPaint.setStrokeWidth(1);
+        sSeriesPaint.setStyle(Paint.Style.STROKE);
+    }
+
     private static final int ROW_COUNT = 10;
 
 
@@ -51,9 +60,15 @@ public class Chart extends View {
 
     private Rect mYAxisRect;
 
+    private Rect mAllSeriesRect;
+
+    private Rect mVisibleSeriesRect;
+
     private int mWidth, mHeight;
 
     private int mMaximumY;
+
+    private int mVisibleXOffset = 0;
 
     private final ArrayList<ChartSeries> mSeries = new ArrayList<>();
 
@@ -93,6 +108,8 @@ public class Chart extends View {
     private void calculateRect() {
         calculateYAxisRect();
         calculateChartBorderRect();
+        calculateAllSeriesRect();
+        calculateVisibleRect();
     }
 
     private void calculateChartBorderRect() {
@@ -102,12 +119,41 @@ public class Chart extends View {
     private void calculateYAxisRect() {
         mYAxisRect = new Rect(0, 0, 0, mHeight);
         for (ChartSeries cs : mSeries) {
-            final int seriesHeight = cs.getSeriesRange().height();
+            final int seriesHeight = cs.getSeriesRange().bottom;
             mMaximumY = Math.max(mMaximumY, seriesHeight);
             mYAxisRect.union(ChartView.getTextBound(String.valueOf(seriesHeight), ChartView.getBlackTextPaint()));
         }
         // expand padding
         mYAxisRect = new Rect(mYAxisRect.left, mYAxisRect.top, mYAxisRect.right + YAXIS_PADDING_RIGHT, mYAxisRect.bottom);
+    }
+
+    private void calculateAllSeriesRect() {
+        mAllSeriesRect = new Rect(0, 0, 0, 0);
+        for (ChartSeries cs : mSeries) {
+            mAllSeriesRect.union(cs.getSeriesRange());
+        }
+        if (DEBUG) {
+            Log.v(TAG, "mAllSeriesRect: " + mAllSeriesRect.toString());
+        }
+    }
+
+    private void calculateVisibleRect() {
+        final int startX = mVisibleXOffset + mAllSeriesRect.left;
+        mVisibleSeriesRect = new Rect(startX, mMaximumY, startX + mChartBorderRect.width(), 0);
+        if (DEBUG) {
+            Log.v(TAG, "mVisibleSeriesRect: " + mVisibleSeriesRect.toString());
+        }
+        for (ChartSeries cs : mSeries) {
+            cs.createPaths(mChartBorderRect, mVisibleSeriesRect);
+        }
+    }
+
+    public ArrayList<ChartSeries> getSeries() {
+        return mSeries;
+    }
+
+    public int getSeriesIndex(int x) {
+        return x - mChartBorderRect.left + mVisibleSeriesRect.left;
     }
 
     // draw
@@ -120,6 +166,16 @@ public class Chart extends View {
         drawRawSeparator(canvas);
         drawBorder(canvas);
         drawYAxisValues(canvas);
+        drawSeries(canvas);
+    }
+
+    private void drawSeries(Canvas canvas) {
+        for (ChartSeries cs : mSeries) {
+            sSeriesPaint.setColor(cs.getPaintColor());
+            for (Path path : cs.getSeriesPath()) {
+                canvas.drawPath(path, sSeriesPaint);
+            }
+        }
     }
 
     private void drawBorder(Canvas canvas) {

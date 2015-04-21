@@ -44,12 +44,12 @@ public class LogsFileParser extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private String getP() {
+    private static String getP() {
         return Environment.getExternalStorageDirectory().getAbsolutePath()
                 + File.separator + "launcherlogs";
     }
 
-    private ArrayList<String> getLogPaths() {
+    private static ArrayList<String> getLogPaths() {
         final ArrayList<String> rtn = new ArrayList<>();
         File f = new File(getP());
         for (String path : f.list()) {
@@ -83,7 +83,7 @@ public class LogsFileParser extends AsyncTask<Void, Void, Void> {
         return rtn;
     }
 
-    private LogData retrieveLog(String raw) {
+    private static LogData retrieveLog(String raw) {
         if (raw == null)
             return null;
         String[] splits = raw.split(": ");
@@ -103,7 +103,7 @@ public class LogsFileParser extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    private ArrayList<LogData> retrieveLogDataFromFiles(ArrayList<String> paths) {
+    private static ArrayList<LogData> retrieveLogDataFromFiles(ArrayList<String> paths) {
         final ArrayList<LogData> rtn = new ArrayList<>();
         FileInputStream is;
         BufferedReader reader;
@@ -127,7 +127,7 @@ public class LogsFileParser extends AsyncTask<Void, Void, Void> {
         return rtn;
     }
 
-    private HashMap<String, ArrayList<String>> splitPathByFileName(ArrayList<String> logPath) {
+    private static HashMap<String, ArrayList<String>> splitPathByFileName(ArrayList<String> logPath) {
         final HashMap<String, ArrayList<String>> processMap = new HashMap<>();
         if (logPath == null || logPath.isEmpty())
             return processMap;
