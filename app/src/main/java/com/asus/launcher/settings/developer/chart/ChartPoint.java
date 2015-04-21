@@ -39,7 +39,7 @@ public class ChartPoint implements Comparable<ChartPoint> {
     }
 
     public String getMessage() {
-        return mExtraInfo == null ? "" : mExtraInfo + "\n" + mFinalMessage == null ? "" : mFinalMessage;
+        return (mExtraInfo == null ? "" : mExtraInfo + "\n") + mFinalMessage == null ? "" : mFinalMessage;
     }
 
     public void setFinalMessage(String msg) {
@@ -60,7 +60,8 @@ public class ChartPoint implements Comparable<ChartPoint> {
 
     @Override
     public String toString() {
-        return "x: " + x + ", y: " + y + ", extraInfo: " + mExtraInfo;
+        return "x: " + x + ", y: " + y + ", extraInfo: " + mExtraInfo
+                + ", mFinalMessage: " + mFinalMessage;
     }
 
     @Override

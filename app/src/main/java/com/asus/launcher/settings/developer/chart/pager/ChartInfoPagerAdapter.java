@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.util.Pair;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -137,7 +138,11 @@ public class ChartInfoPagerAdapter extends PagerAdapter {
                 convertView = new TextView(mContext);
             }
             Pair<Integer, ChartPoint> item = getItem(position);
-            ((TextView) convertView).setText(item.second.getMessage());
+            final TextView txt = ((TextView) convertView);
+            txt.setText(item.second.getMessage());
+            txt.setPadding(5, 0, 5, 0);
+            txt.setGravity(Gravity.CENTER_VERTICAL);
+            txt.setIncludeFontPadding(false);
             if (position == mSelection) {
                 convertView.setBackgroundColor(Color.rgb(53, 178, 222));
             } else {
