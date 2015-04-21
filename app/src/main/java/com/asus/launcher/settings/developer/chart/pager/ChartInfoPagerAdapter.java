@@ -137,7 +137,7 @@ public class ChartInfoPagerAdapter extends PagerAdapter {
                 convertView = new TextView(mContext);
             }
             Pair<Integer, ChartPoint> item = getItem(position);
-            ((TextView) convertView).setText(item.second.getExtraInfo());
+            ((TextView) convertView).setText(item.second.getMessage());
             if (position == mSelection) {
                 convertView.setBackgroundColor(Color.rgb(53, 178, 222));
             } else {

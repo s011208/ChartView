@@ -30,7 +30,7 @@ public class ChartSeriesName extends View {
 
     public ChartSeriesName(Context context) {
         super(context);
-        mColumns = context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 2 : 1;
+        mColumns = 1;
         setPadding(0, VERTICAL_PADDING, 0, VERTICAL_PADDING);
         mLinePaint.setAntiAlias(true);
         mLinePaint.setStrokeWidth(LINE_RECT.height());

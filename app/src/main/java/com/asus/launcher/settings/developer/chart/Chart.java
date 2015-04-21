@@ -22,7 +22,7 @@ public class Chart extends View {
 
     private static final int HOLO_BORDER_WIDTH = 3;
     private static final int BORDER_VERTICAL_PADDING = 20;
-    private static final int YAXIS_PADDING_RIGHT = 3;
+    private static final int Y_AXIS_PADDING_RIGHT = 3;
 
     // paints
     private static final Paint sHoloGridPaint = new Paint();
@@ -128,7 +128,7 @@ public class Chart extends View {
             mYAxisRect.union(ChartView.getTextBound(String.valueOf(seriesHeight), ChartView.getBlackTextPaint()));
         }
         // expand padding
-        mYAxisRect = new Rect(mYAxisRect.left, mYAxisRect.top, mYAxisRect.right + YAXIS_PADDING_RIGHT, mYAxisRect.bottom);
+        mYAxisRect = new Rect(mYAxisRect.left, mYAxisRect.top, mYAxisRect.right + Y_AXIS_PADDING_RIGHT, mYAxisRect.bottom);
     }
 
     private void calculateAllSeriesRect() {

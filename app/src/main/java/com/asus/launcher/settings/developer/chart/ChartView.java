@@ -1,5 +1,7 @@
 package com.asus.launcher.settings.developer.chart;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,6 +9,8 @@ import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.asus.launcher.log.LogData;
@@ -54,8 +58,11 @@ public class ChartView extends RelativeLayout {
     private ChartSeriesName mChartSeriesName;
     private ChartSelectedLine mChartSelectedLine;
     private ChartInfoPager mChartInfoPager;
+    private ProgressBar mLoadingView;
     // data
     private final ArrayList<ChartSeries> mChartSeries = new ArrayList<ChartSeries>();
+
+    private boolean mIsFirstTime = true;
 
     public ChartView(Context context) {
         this(context, null);
@@ -75,7 +82,8 @@ public class ChartView extends RelativeLayout {
         new LogsFileParser(new LogsFileParser.Callback() {
             @Override
             public void onPreExecute() {
-
+                showProgress(!mIsFirstTime);
+                mIsFirstTime = false;
             }
 
             @Override
@@ -94,13 +102,152 @@ public class ChartView extends RelativeLayout {
                             Log.d(TAG, "series size: " + series.size());
                         }
                         setup();
+                        hideProgress(true);
                     }
                 }).setLogDataMap(logDataMap).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void setChartInfoPager(ChartInfoPager pager){
+    private void showProgress(boolean animated) {
+        final Runnable finalJob = new Runnable() {
+            @Override
+            public void run() {
+                if (mChartInfoPager != null) {
+                    mChartInfoPager.setVisibility(View.INVISIBLE);
+                }
+                getChart().setVisibility(View.INVISIBLE);
+                getChartSeriesName().setVisibility(View.INVISIBLE);
+                getChartSelectedLine().setVisibility(View.INVISIBLE);
+                getLoadingView().setVisibility(View.VISIBLE);
+            }
+        };
+        if (animated) {
+            ValueAnimator va = ValueAnimator.ofFloat(0, 1);
+            va.setDuration(250);
+            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    final float value = (float) animation.getAnimatedValue();
+                    getChart().setAlpha(1 - value);
+                    getChartSeriesName().setAlpha(1 - value);
+                    getChartSelectedLine().setAlpha(1 - value);
+                    if (mChartInfoPager != null) {
+                        mChartInfoPager.setAlpha(1 - value);
+                    }
+                    getLoadingView().setAlpha(value);
+                }
+            });
+            va.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    if (mChartInfoPager != null) {
+                        mChartInfoPager.setVisibility(View.VISIBLE);
+                    }
+                    getChart().setVisibility(View.VISIBLE);
+                    getChartSeriesName().setVisibility(View.VISIBLE);
+                    getChartSelectedLine().setVisibility(View.VISIBLE);
+                    getLoadingView().setVisibility(View.VISIBLE);
+                    if (mChartInfoPager != null) {
+                        mChartInfoPager.setAlpha(1);
+                    }
+                    getChart().setAlpha(1);
+                    getChartSeriesName().setAlpha(1);
+                    getChartSelectedLine().setAlpha(1);
+                    getLoadingView().setAlpha(0);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    finalJob.run();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            va.start();
+        } else {
+            finalJob.run();
+        }
+    }
+
+    private void hideProgress(boolean animated) {
+        final Runnable finalJob = new Runnable() {
+            @Override
+            public void run() {
+                if (mChartInfoPager != null) {
+                    mChartInfoPager.setVisibility(View.VISIBLE);
+                }
+                getChart().setVisibility(View.VISIBLE);
+                getChartSeriesName().setVisibility(View.VISIBLE);
+                getChartSelectedLine().setVisibility(View.VISIBLE);
+                getLoadingView().setVisibility(View.GONE);
+            }
+        };
+        if (animated) {
+            ValueAnimator va = ValueAnimator.ofFloat(0, 1);
+            va.setDuration(250);
+            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    final float value = (float) animation.getAnimatedValue();
+                    getChart().setAlpha(value);
+                    getChartSeriesName().setAlpha(value);
+                    getChartSelectedLine().setAlpha(value);
+                    if (mChartInfoPager != null) {
+                        mChartInfoPager.setAlpha(value);
+                    }
+                    getLoadingView().setAlpha(1 - value);
+                }
+            });
+            va.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    if (mChartInfoPager != null) {
+                        mChartInfoPager.setVisibility(View.VISIBLE);
+                    }
+                    getChart().setVisibility(View.VISIBLE);
+                    getChartSeriesName().setVisibility(View.VISIBLE);
+                    getChartSelectedLine().setVisibility(View.VISIBLE);
+                    getLoadingView().setVisibility(View.VISIBLE);
+                    if (mChartInfoPager != null) {
+                        mChartInfoPager.setAlpha(0);
+                    }
+                    getChart().setAlpha(0);
+                    getChartSeriesName().setAlpha(0);
+                    getChartSelectedLine().setAlpha(0);
+                    getLoadingView().setAlpha(1);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    finalJob.run();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            va.start();
+        } else {
+            finalJob.run();
+        }
+    }
+
+    public void setChartInfoPager(ChartInfoPager pager) {
         mChartInfoPager = pager;
     }
 
@@ -108,6 +255,18 @@ public class ChartView extends RelativeLayout {
         getChart();
         getChartSeriesName();
         getChartSelectedLine();
+        getLoadingView();
+    }
+
+    private synchronized ProgressBar getLoadingView() {
+        if (mLoadingView == null) {
+            mLoadingView = new ProgressBar(mContext);
+            mLoadingView.setIndeterminate(true);
+            RelativeLayout.LayoutParams rl = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            rl.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            addView(mLoadingView, rl);
+        }
+        return mLoadingView;
     }
 
     private synchronized ChartSeriesName getChartSeriesName() {

@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -13,9 +12,6 @@ import android.view.View;
  * Created by yenhsunhuang on 15/4/21.
  */
 public class ChartSelectedLine extends View {
-    private static final String TAG = ChartView.TAG;
-    private static final boolean DEBUG = ChartView.DEBUG;
-
     public interface Callback {
         public void onLinePositionChanged(int index, Rect border, Rect visible);
     }
@@ -31,7 +27,7 @@ public class ChartSelectedLine extends View {
     }
 
     // control line
-    private int mTouchX;
+    private int mTouchX = -1;
 
     private Callback mCallback;
 
@@ -52,7 +48,7 @@ public class ChartSelectedLine extends View {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mChart == null || mChart.getChartBorderRect() == null) {
+        if (mChart == null || mChart.getChartBorderRect() == null || mTouchX < 0) {
             return;
         }
         drawSelectionLine(canvas);
@@ -81,10 +77,7 @@ public class ChartSelectedLine extends View {
 
     private boolean isInChartBorder(int x, int y) {
         final Rect chartBorderRect = mChart.getChartBorderRect();
-        if (x >= chartBorderRect.left && x <= chartBorderRect.right
-                && y >= chartBorderRect.top && y <= chartBorderRect.bottom) {
-            return true;
-        }
-        return false;
+        return (x >= chartBorderRect.left && x <= chartBorderRect.right
+                && y >= chartBorderRect.top && y <= chartBorderRect.bottom);
     }
 }

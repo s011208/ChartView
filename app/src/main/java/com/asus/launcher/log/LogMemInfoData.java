@@ -119,6 +119,6 @@ public class LogMemInfoData extends LogData {
 
     @Override
     public String toSimpleString() {
-        return "mTotalPss: " + mTotalPss + "\n";
+        return "TotalPss: " + mTotalPss + "\n";
     }
 }
