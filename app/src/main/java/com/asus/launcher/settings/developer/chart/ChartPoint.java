@@ -39,7 +39,7 @@ public class ChartPoint implements Comparable<ChartPoint> {
     }
 
     public String getMessage() {
-        return (mExtraInfo == null ? "" : mExtraInfo + "\n") + mFinalMessage == null ? "" : mFinalMessage;
+        return (mExtraInfo == null ? "" : mExtraInfo + "\n") + (mFinalMessage == null ? "" : mFinalMessage);
     }
 
     public void setFinalMessage(String msg) {
