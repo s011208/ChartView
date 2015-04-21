@@ -76,7 +76,6 @@ public class ChartInfoPager extends ViewPager implements ChartSelectedLine.Callb
     }
 
     public void setup(ArrayList<ChartSeries> drawingSeries) {
-        mCallbacks.clear();
         mAdapter = new ChartInfoPagerAdapter(mContext, drawingSeries, this);
         setAdapter(mAdapter);
         if (mCurrentPage >= 0) {
@@ -86,7 +85,7 @@ public class ChartInfoPager extends ViewPager implements ChartSelectedLine.Callb
 
     @Override
     public void onLinePositionChanged(int index, Rect border, Rect visible) {
-            for (Callback cb : mCallbacks) {
+        for (Callback cb : mCallbacks) {
             cb.onChartSelectIndexChanged(index);
         }
     }

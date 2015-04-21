@@ -112,7 +112,7 @@ public class ChartSeriesAdapter extends AsyncTask<Void, Void, Void> {
                 point.combinePoints(new ChartPoint(index, ((LogMemInfoData) data).mTotalPss, log, data.toSimpleString()));
                 cSeries.addChartPoint(index, point);
             }
-            Log.e(TAG, point.toString());
+            Log.v(TAG, point.toString());
         } else if (data instanceof LogConfigData) {
             if (isLogMeanful(data.toSimpleString())) {
                 sb.append(data.toSimpleString());

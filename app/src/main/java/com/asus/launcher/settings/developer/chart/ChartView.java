@@ -24,6 +24,10 @@ import java.util.HashMap;
  * Created by Yen-Hsun_Huang on 2015/4/20.
  */
 public class ChartView extends RelativeLayout {
+    public interface Callback {
+        public void onDataLoaded();
+    }
+
     protected static final boolean DEBUG = true;
     protected static final String TAG = "QQQQ";
 
@@ -64,6 +68,8 @@ public class ChartView extends RelativeLayout {
 
     private boolean mIsFirstTime = true;
 
+    private final ArrayList<Callback> mCallbacks = new ArrayList<>();
+
     public ChartView(Context context) {
         this(context, null);
     }
@@ -76,6 +82,16 @@ public class ChartView extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         mContext = context;
         initComponents();
+    }
+
+    public void addCallback(Callback cb) {
+        if (mCallbacks.contains(cb))
+            return;
+        mCallbacks.add(cb);
+    }
+
+    public void removeCallback(Callback cb) {
+        mCallbacks.remove(cb);
     }
 
     public void getLogDataAndDraw() {
@@ -103,6 +119,9 @@ public class ChartView extends RelativeLayout {
                         }
                         setup();
                         hideProgress(true);
+                        for(Callback cb : mCallbacks) {
+                            cb.onDataLoaded();
+                        }
                     }
                 }).setLogDataMap(logDataMap).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -258,6 +277,10 @@ public class ChartView extends RelativeLayout {
         getLoadingView();
     }
 
+    public ArrayList<ChartSeries> getSeries() {
+        return getChart().getSeries();
+    }
+
     private synchronized ProgressBar getLoadingView() {
         if (mLoadingView == null) {
             mLoadingView = new ProgressBar(mContext);
@@ -323,6 +346,11 @@ public class ChartView extends RelativeLayout {
         mChartInfoPager.setup(getChart().getSeries());
         requestLayout();
         invalidate();
+    }
+
+    public void requestReDraw(){
+        getChart().invalidate();
+        getChartSeriesName().invalidate();
     }
 
     protected static Paint getBlackTextPaint() {

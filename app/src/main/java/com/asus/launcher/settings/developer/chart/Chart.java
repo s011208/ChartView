@@ -175,6 +175,8 @@ public class Chart extends View {
 
     private void drawSeries(Canvas canvas) {
         for (ChartSeries cs : mSeries) {
+            if (cs.isVisible() == false)
+                continue;
             sSeriesPaint.setColor(cs.getPaintColor());
             for (Path path : cs.getSeriesPath()) {
                 canvas.drawPath(path, sSeriesPaint);

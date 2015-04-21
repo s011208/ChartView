@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.asus.launcher.settings.developer.chart.ChartPoint;
 import com.asus.launcher.settings.developer.chart.ChartSeries;
+import com.asus.launcher.settings.developer.chart.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -139,7 +140,7 @@ public class ChartInfoPagerAdapter extends PagerAdapter {
             }
             Pair<Integer, ChartPoint> item = getItem(position);
             final TextView txt = ((TextView) convertView);
-            txt.setText(item.second.getMessage());
+            txt.setText(MainActivity.isShowExtraInfo(mContext) ? item.second.getMessage() : item.second.getFinalMessage());
             txt.setPadding(5, 0, 5, 0);
             txt.setGravity(Gravity.CENTER_VERTICAL);
             txt.setIncludeFontPadding(false);

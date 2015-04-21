@@ -4,8 +4,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.Log;
-import android.util.LongSparseArray;
 import android.util.SparseArray;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -32,8 +32,18 @@ public class ChartSeries implements Comparable<ChartSeries> {
 
     private final ArrayList<Path> mSeriesPath = new ArrayList<>();
 
+    private int mVisibility = View.VISIBLE;
+
     public ChartSeries(String seriesName) {
         mSeriesName = seriesName;
+    }
+
+    public void setVisibility(int visibility) {
+        mVisibility = visibility;
+    }
+
+    public boolean isVisible() {
+        return mVisibility == View.VISIBLE;
     }
 
     private void calculateSeriesRange(ChartPoint point) {

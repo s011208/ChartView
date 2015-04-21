@@ -19,6 +19,7 @@ public class ChartSeriesName extends View {
     private static final Rect LINE_RECT = new Rect(0, 0, 50, 3);
     private static final int VERTICAL_PADDING = 5;
     private static final int HORIZONTAL_PADDING = 20;
+    private Context mContext;
 
     private final Paint mLinePaint = new Paint();
     private final ArrayList<Pair<String, Integer>> mSeries = new ArrayList<>();
@@ -29,6 +30,7 @@ public class ChartSeriesName extends View {
 
     public ChartSeriesName(Context context) {
         super(context);
+        mContext = context;
         mColumns = 1;
         setPadding(0, VERTICAL_PADDING, 0, VERTICAL_PADDING);
         mLinePaint.setAntiAlias(true);
@@ -128,6 +130,8 @@ public class ChartSeriesName extends View {
     private void drawSeriesName(Canvas canvas) {
         for (int i = 0; i < mSeries.size(); i++) {
             Pair<String, Integer> series = mSeries.get(i);
+            if (MainActivity.isShowProcess(mContext, series.first) == false)
+                continue;
             final int column = i % mColumns;
             final int row = i / mColumns;
             final int startX = mItemRect.width() * column;
