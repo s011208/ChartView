@@ -52,7 +52,7 @@ public class LogBehaviorData extends LogData {
     @Override
     public String toSimpleString() {
         return "Category: " + mCategory
-                + ", Action: " + mAction
-                + ", Label: " + mLabel + "\n";
+                + (mAction == null ? "" : ", Action: " + mAction)
+                + (mLabel == null ? "" : ", Label: " + mLabel) + "\n";
     }
 }
