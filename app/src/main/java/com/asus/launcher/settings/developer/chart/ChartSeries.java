@@ -70,6 +70,7 @@ public class ChartSeries implements Comparable<ChartSeries> {
     }
 
     public void createPaths(Rect border, Rect visibleRect) {
+        mSeriesPath.clear();
         Path path = new Path();
         if (DEBUG)
             Log.d(TAG, "createPaths, border: " + border

@@ -40,8 +40,6 @@ public class ChartView extends RelativeLayout {
                 .setTextSize(20);
     }
 
-    public static final Rect sTextRect = getTextBound("1234567890", sBlackTextPaint);
-
     public static Rect getTextBound(String txt, Paint paint) {
         Rect bounds = new Rect();
         paint.getTextBounds(txt, 0, txt.length(), bounds);
@@ -84,6 +82,16 @@ public class ChartView extends RelativeLayout {
         initComponents();
     }
 
+    public void moveToLeft() {
+        getChart().moveToLeft();
+        setup();
+    }
+
+    public void moveToRight() {
+        getChart().moveToRight();
+        setup();
+    }
+
     public void addCallback(Callback cb) {
         if (mCallbacks.contains(cb))
             return;
@@ -119,7 +127,7 @@ public class ChartView extends RelativeLayout {
                         }
                         setup();
                         hideProgress(true);
-                        for(Callback cb : mCallbacks) {
+                        for (Callback cb : mCallbacks) {
                             cb.onDataLoaded();
                         }
                     }
@@ -348,7 +356,7 @@ public class ChartView extends RelativeLayout {
         invalidate();
     }
 
-    public void requestReDraw(){
+    public void requestReDraw() {
         getChart().invalidate();
         getChartSeriesName().invalidate();
     }

@@ -24,6 +24,7 @@ public class LogBehaviorData extends LogData {
         mCategory = category;
         mAction = action;
         mLabel = label;
+        mTime = System.currentTimeMillis();
     }
 
     public LogBehaviorData(JSONObject json) {
@@ -43,7 +44,7 @@ public class LogBehaviorData extends LogData {
             json.put(CATEGORY, mCategory);
             json.put(ACTION, mAction);
             json.put(LABEL, mLabel);
-            json.put(TIME, System.currentTimeMillis());
+            json.put(TIME, mTime);
         } catch (JSONException e) {
         }
         return json;

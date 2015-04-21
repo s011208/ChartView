@@ -20,6 +20,7 @@ public class LogConfigData extends LogData {
 
     public LogConfigData(String config) {
         mConfig = config;
+        mTime = System.currentTimeMillis();
     }
 
     public LogConfigData(JSONObject json) {
@@ -35,7 +36,7 @@ public class LogConfigData extends LogData {
         JSONObject json = new JSONObject();
         try {
             json.put(CONFIG, mConfig);
-            json.put(TIME, System.currentTimeMillis());
+            json.put(TIME, mTime);
         } catch (JSONException e) {
         }
         return json;

@@ -39,6 +39,8 @@ public class ChartSelectedLine extends View {
 
     public void setup(Chart chart) {
         mChart = chart;
+        mTouchX = -1;
+        invalidate();
     }
 
     public void setCallback(Callback cb) {

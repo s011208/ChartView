@@ -1,13 +1,12 @@
-
 package com.asus.launcher.log;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import android.os.Debug.MemoryInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Debug.MemoryInfo;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * @author yen-hsun_huang
@@ -53,6 +52,7 @@ public class LogMemInfoData extends LogData {
 
     public LogMemInfoData(MemoryInfo info) {
         mInfo = info;
+        mTime = System.currentTimeMillis();
     }
 
     public LogMemInfoData(JSONObject json) {
@@ -72,7 +72,7 @@ public class LogMemInfoData extends LogData {
         try {
             rtn.put(TOTAL_PSS, mInfo.getTotalPss());
             rtn.put(TOTAL_USS,
-                    getMemoryInfoMethod(mInfo, "getTotalUss", new Class[] {}, new Object[] {}, -1));
+                    getMemoryInfoMethod(mInfo, "getTotalUss", new Class[]{}, new Object[]{}, -1));
             rtn.put(DALVIK_PRIVATE_CLEAN, getMemoryInfoField(mInfo, "dalvikPrivateClean", -1));
             rtn.put(DALVIK_PRIVATE_DIRTY, mInfo.dalvikPrivateDirty);
             rtn.put(DALVIK_PSS, mInfo.dalvikPss);
@@ -88,19 +88,19 @@ public class LogMemInfoData extends LogData {
             rtn.put(OTHER_PRIVATE_CLEAN, getMemoryInfoField(mInfo, "otherPrivateClean", -1));
             rtn.put(OTHER_PRIVATE_DIRTY, mInfo.otherPrivateDirty);
             rtn.put(OTHER_PSS, mInfo.otherPss);
-            rtn.put(TIME, System.currentTimeMillis());
+            rtn.put(TIME, mTime);
         } catch (JSONException e) {
         }
         return rtn;
     }
 
     private static int getMemoryInfoMethod(MemoryInfo info, String property, Class<?>[] params,
-            Object[] args, int defaultValue) {
+                                           Object[] args, int defaultValue) {
         int rtn = defaultValue;
         try {
             Class<?> c = MemoryInfo.class;
             Method m = c.getMethod(property, params);
-            rtn = (Integer)m.invoke(info, args);
+            rtn = (Integer) m.invoke(info, args);
         } catch (Exception e) {
         }
         return rtn;
@@ -111,7 +111,7 @@ public class LogMemInfoData extends LogData {
         try {
             Class<?> c = MemoryInfo.class;
             Field f = c.getField(fieldName);
-            rtn = (Integer)f.get(info);
+            rtn = (Integer) f.get(info);
         } catch (Exception e) {
         }
         return rtn;

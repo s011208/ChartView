@@ -112,7 +112,9 @@ public class MainActivity extends Activity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == MENU_MORE_TO_LEFT) {
+            mChartView.moveToLeft();
         } else if (item.getItemId() == MENU_MORE_TO_RIGHT) {
+            mChartView.moveToRight();
         } else if (item.getItemId() == MENU_HIDE_EXTRA_INFO) {
             mIsShowExtraInfo = !mIsShowExtraInfo;
             item.setChecked(mIsShowExtraInfo);

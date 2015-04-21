@@ -24,6 +24,9 @@ public class Chart extends View {
     private static final int BORDER_VERTICAL_PADDING = 20;
     private static final int Y_AXIS_PADDING_RIGHT = 3;
 
+    private static final int MOVE_DISTANCE = 100;
+
+
     // paints
     private static final Paint sHoloGridPaint = new Paint();
 
@@ -55,7 +58,7 @@ public class Chart extends View {
 
     private int mHeightPerRow;
 
-    // region rects
+    // region rect
     private Rect mChartBorderRect;
 
     private Rect mYAxisRect;
@@ -81,6 +84,14 @@ public class Chart extends View {
     }
 
     private void calculateVariables() {
+    }
+
+    public void moveToLeft() {
+        mVisibleXOffset -= MOVE_DISTANCE;
+    }
+
+    public void moveToRight() {
+        mVisibleXOffset += MOVE_DISTANCE;
     }
 
     public void setup(ArrayList<ChartSeries> series) {
