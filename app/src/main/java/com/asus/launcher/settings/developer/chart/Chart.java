@@ -101,6 +101,10 @@ public class Chart extends View {
         invalidate();
     }
 
+    public Rect getVisibleSeriesRect() {
+        return mVisibleSeriesRect;
+    }
+
     public Rect getChartBorderRect() {
         return mChartBorderRect;
     }

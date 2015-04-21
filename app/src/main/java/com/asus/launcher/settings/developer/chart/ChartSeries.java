@@ -5,6 +5,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.Log;
 import android.util.LongSparseArray;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,7 @@ public class ChartSeries implements Comparable<ChartSeries> {
 
     private int mMinimumX = -1, mMaximumX = -1, mMinimumY = -1, mMaximumY = -1;
 
-    private final LongSparseArray<ChartPoint> mSeriesPoints = new LongSparseArray<>();
+    private final SparseArray<ChartPoint> mSeriesPoints = new SparseArray<>();
 
     private final ArrayList<Path> mSeriesPath = new ArrayList<>();
 
@@ -69,7 +70,7 @@ public class ChartSeries implements Comparable<ChartSeries> {
                 continue;
             }
             final int x = border.left + (i - visibleRect.left);
-            final int y = border.height() - (int)((border.height() / (float) Math.abs(visibleRect.height())) * point.y) + border.top;
+            final int y = border.height() - (int) ((border.height() / (float) Math.abs(visibleRect.height())) * point.y) + border.top;
             if (DEBUG)
                 Log.d(TAG, "x: " + x + ", y: " + y + ", point.y: " + point.y);
             if (path.isEmpty()) {
@@ -91,6 +92,10 @@ public class ChartSeries implements Comparable<ChartSeries> {
 
     public ChartPoint getChartPoint(int index) {
         return mSeriesPoints.get(index);
+    }
+
+    public SparseArray<ChartPoint> getChartPoints() {
+        return mSeriesPoints;
     }
 
     public int getChartPointSize() {

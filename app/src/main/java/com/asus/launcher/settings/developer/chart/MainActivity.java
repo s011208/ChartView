@@ -2,8 +2,11 @@ package com.asus.launcher.settings.developer.chart;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.view.PagerTabStrip;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.asus.launcher.settings.developer.chart.pager.ChartInfoPager;
 
 
 public class MainActivity extends Activity {
@@ -12,8 +15,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        ChartView cv = (ChartView) findViewById(R.id.chart_view);
-//        cv.setup();
+        ChartView cv = (ChartView) findViewById(R.id.chart_view);
+        ChartInfoPager pager = (ChartInfoPager)findViewById(R.id.chart_pager);
+        PagerTabStrip pagerTab = (PagerTabStrip)findViewById(R.id.pager_tab);
+        pager.setPagerTabStrip(pagerTab);
+        cv.setChartInfoPager(pager);
+        cv.getLogDataAndDraw();
     }
 
 

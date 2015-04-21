@@ -17,7 +17,7 @@ public class ChartSelectedLine extends View {
     private static final boolean DEBUG = ChartView.DEBUG;
 
     public interface Callback {
-        public void onLinePositionChanged(int index);
+        public void onLinePositionChanged(int index, Rect border, Rect visible);
     }
 
     private static final Paint sSelectionPaint = new Paint();
@@ -72,22 +72,11 @@ public class ChartSelectedLine extends View {
         if (isPositionValid) {
             mTouchX = x;
             if (mCallback != null) {
-                mCallback.onLinePositionChanged(mChart.getSeriesIndex(x));
+                mCallback.onLinePositionChanged(mChart.getSeriesIndex(x), mChart.getChartBorderRect(), mChart.getVisibleSeriesRect());
             }
-            test(mChart.getSeriesIndex(x));
             invalidate();
         }
         return isPositionValid;
-    }
-
-    private void test(int index) {
-        for (ChartSeries series : mChart.getSeries()) {
-            ChartPoint point = series.getChartPoint(index);
-            if (point != null) {
-                if (DEBUG)
-                    Log.d(TAG, point.toString());
-            }
-        }
     }
 
     private boolean isInChartBorder(int x, int y) {

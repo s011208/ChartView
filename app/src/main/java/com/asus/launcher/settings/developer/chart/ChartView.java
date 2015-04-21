@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.asus.launcher.log.LogData;
 import com.asus.launcher.log.LogsFileParser;
+import com.asus.launcher.settings.developer.chart.pager.ChartInfoPager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ public class ChartView extends RelativeLayout {
     private Chart mChart;
     private ChartSeriesName mChartSeriesName;
     private ChartSelectedLine mChartSelectedLine;
+    private ChartInfoPager mChartInfoPager;
     // data
     private final ArrayList<ChartSeries> mChartSeries = new ArrayList<ChartSeries>();
 
@@ -67,7 +69,6 @@ public class ChartView extends RelativeLayout {
         super(context, attrs, defStyleAttr);
         mContext = context;
         initComponents();
-        getLogDataAndDraw();
     }
 
     public void getLogDataAndDraw() {
@@ -97,6 +98,10 @@ public class ChartView extends RelativeLayout {
                 }).setLogDataMap(logDataMap).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void setChartInfoPager(ChartInfoPager pager){
+        mChartInfoPager = pager;
     }
 
     private void initComponents() {
@@ -155,6 +160,8 @@ public class ChartView extends RelativeLayout {
         getChart().setup(mChartSeries);
         getChartSeriesName().setup(mChartSeries);
         getChartSelectedLine().setup(getChart());
+        getChartSelectedLine().setCallback(mChartInfoPager);
+        mChartInfoPager.setup(getChart().getSeries());
         requestLayout();
         invalidate();
     }
