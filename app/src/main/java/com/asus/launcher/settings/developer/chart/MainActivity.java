@@ -15,7 +15,9 @@ import com.asus.launcher.settings.developer.chart.pager.ChartInfoPager;
 public class MainActivity extends Activity {
     private static final int MENU_GROUP_STATIC = 0;
     private static final int MENU_GROUP_DYNAMIC = 1;
-    private static final int MENU_HIDE_EXTRA_INFO = Menu.FIRST + 1;
+    private static final int MENU_MORE_TO_LEFT = Menu.FIRST + 1;
+    private static final int MENU_MORE_TO_RIGHT = Menu.FIRST + 2;
+    private static final int MENU_HIDE_EXTRA_INFO = Menu.FIRST + 3;
     private static final String PREFERENCE_KEY = "com.asus.launcher.settings.developer.chart.prefs";
     private static final String KEY_SHOW_EXTRA_INFO = "show_extra_info";
     private ChartView mChartView;
@@ -74,31 +76,44 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void addStaticMenus(Menu menu) {
+        mIsShowExtraInfo = isShowExtraInfo(this);
+        menu.add(MENU_GROUP_STATIC, MENU_MORE_TO_LEFT, MENU_MORE_TO_LEFT, "Move to left").setIcon(R.drawable.ic_developer_a_l);
+        menu.add(MENU_GROUP_STATIC, MENU_MORE_TO_RIGHT, MENU_MORE_TO_RIGHT, "Move to right").setIcon(R.drawable.ic_developer_a_r);
+        menu.add(MENU_GROUP_STATIC, MENU_HIDE_EXTRA_INFO, MENU_HIDE_EXTRA_INFO, "Show extra info");
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         menu.clear();
-        mIsShowExtraInfo = isShowExtraInfo(this);
-        menu.add(MENU_GROUP_STATIC, MENU_HIDE_EXTRA_INFO, 0, "Show extra info");
+        addStaticMenus(menu);
         addDynamicMenus(menu);
         setMenuCheckStatus(menu);
-
         return true;
     }
 
     private void setMenuCheckStatus(Menu menu) {
         for (int i = 0; i < menu.size(); i++) {
-            final MenuItem item = menu.getItem(i).setCheckable(true);
-            if (item.getItemId() == MENU_HIDE_EXTRA_INFO) {
+            final MenuItem item = menu.getItem(i);
+            if (item.getItemId() == MENU_MORE_TO_LEFT) {
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            } else if (item.getItemId() == MENU_MORE_TO_RIGHT) {
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            } else if (item.getItemId() == MENU_HIDE_EXTRA_INFO) {
+                item.setCheckable(true);
                 item.setChecked(mIsShowExtraInfo);
             } else {
+                item.setCheckable(true);
                 item.setChecked(isShowProcess(this, item.getTitle().toString()));
             }
         }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == MENU_HIDE_EXTRA_INFO) {
+        if (item.getItemId() == MENU_MORE_TO_LEFT) {
+        } else if (item.getItemId() == MENU_MORE_TO_RIGHT) {
+        } else if (item.getItemId() == MENU_HIDE_EXTRA_INFO) {
             mIsShowExtraInfo = !mIsShowExtraInfo;
             item.setChecked(mIsShowExtraInfo);
             setShowExtraInfo(this, mIsShowExtraInfo);
